@@ -50,10 +50,10 @@ const getUsersFromDb = async (
   const { page, limit, skip } = paginationHelper.calculatePagination(options);
   const { searchTerm, ...filterData } = params;
 
-  const andCondions: Prisma.UserWhereInput[] = [];
+  const andConditions: Prisma.UserWhereInput[] = [];
 
   if (params.searchTerm) {
-    andCondions.push({
+    andConditions.push({
       OR: userSearchAbleFields.map((field) => ({
         [field]: {
           contains: params.searchTerm,
@@ -64,7 +64,7 @@ const getUsersFromDb = async (
   }
 
   if (Object.keys(filterData).length > 0) {
-    andCondions.push({
+    andConditions.push({
       AND: Object.keys(filterData).map((key) => ({
         [key]: {
           equals: (filterData as any)[key],
@@ -72,10 +72,10 @@ const getUsersFromDb = async (
       })),
     });
   }
-  const whereConditons: Prisma.UserWhereInput = { AND: andCondions };
+  const whereConditions: Prisma.UserWhereInput = { AND: andConditions };
 
   const result = await prisma.user.findMany({
-    where: whereConditons,
+    where: whereConditions,
     skip,
     orderBy:
       options.sortBy && options.sortOrder
@@ -95,7 +95,7 @@ const getUsersFromDb = async (
     },
   });
   const total = await prisma.user.count({
-    where: whereConditons,
+    where: whereConditions,
   });
 
   if (!result || result.length === 0) {
@@ -120,8 +120,9 @@ const getMyProfile = async (userEmail: string) => {
       id: true,
       fullName: true,
       email: true,
-      createdAt: true,
-      updatedAt: true,
+      location: true,
+      image: true,
+      phoneNumber: true,
     },
   });
 
@@ -129,18 +130,28 @@ const getMyProfile = async (userEmail: string) => {
 };
 
 const updateProfile = async (payload: User, imageFile: any, userId: string) => {
-  const result = await prisma.$transaction(async (prisma) => {
-    let image = "";
-    if (imageFile) {
-      image = (await fileUploader.uploadToCloudinary(imageFile)).Location;
-    }
+  const user = await prisma.user.findFirst({
+    where: { id: userId },
+    select: { id: true, image: true },
+  });
 
-    const createUserProfile = await prisma.user.update({
-      where: { id: userId },
-      data: { ...payload, profileImage: image },
-    });
+  let image = user?.image;
 
-    return createUserProfile;
+  if (imageFile) {
+    image = (await fileUploader.uploadToCloudinary(imageFile)).Location;
+  }
+
+  const result = await prisma.user.update({
+    where: { id: userId },
+    data: { ...payload, image: image },
+    select: {
+      id: true,
+      fullName: true,
+      email: true,
+      location: true,
+      image: true,
+      phoneNumber: true,
+    },
   });
 
   return result;

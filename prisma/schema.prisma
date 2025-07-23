@@ -11,8 +11,8 @@ model User {
   id            String          @id @default(auto()) @map("_id") @db.ObjectId
   fullName      String
   image         String?         @default("")
-  phoneNumber   String?
-  location      String?
+  phoneNumber   String?         @default("")
+  location      String?         @default("")
   email         String          @unique
   password      String
   fcmToken      String?         @default("")
@@ -30,13 +30,13 @@ model User {
 model Product {
   id            String          @id @default(auto()) @map("_id") @db.ObjectId
   name          String
-  image         String[]
-  price         String
+  images         String[]
+  price         Float
   description   String
   weight        Float
   category      ProductCategory
   stock         Int?            @default(0)
-  status        ProductStatus
+  status        ProductStatus   @default(ACTIVE)
   avgRating     Int?            @default(0)
   createdAt     DateTime        @default(now())
   updatedAt     DateTime        @updatedAt
