@@ -1,40 +1,41 @@
 import express, { NextFunction, Request, Response } from "express";
 import validateRequest from "../../middlewares/validateRequest";
-import { ProductValidation } from "./Product.validation";
+import { SalesBoardValidation } from "./SalesBoard.validation";
 import auth from "../../middlewares/auth";
+import { SalesBoardController } from "./SalesBoard.controller";
 import { fileUploader } from "../../../helpars/fileUploader";
-import { ProductController } from "./Product.controller";
 import { UserRole } from "@prisma/client";
 
 const router = express.Router();
 
 router
   .route("/")
-  .get(ProductController.getProducts)
+  .get(auth(), SalesBoardController.allSalesBoard)
   .post(
     auth(UserRole.ADMIN),
-    fileUploader.uploadMultipleImage,
+    fileUploader.uploadSingle,
     (req: Request, res: Response, next: NextFunction) => {
       req.body = JSON.parse(req.body.data);
       next();
     },
-    validateRequest(ProductValidation.CreateProductSchema),
-    ProductController.createProduct
+    validateRequest(SalesBoardValidation.CreateSalesBoardSchema),
+    SalesBoardController.addSalesBoard
   );
+
+router.get("/my", auth(), SalesBoardController.mySalesBoard);
 
 router
   .route("/:id")
-  .get(auth(), ProductController.getSingleProduct)
   .put(
+    auth(),
     auth(UserRole.ADMIN),
-    fileUploader.uploadMultipleImage,
+    fileUploader.uploadSingle,
     (req: Request, res: Response, next: NextFunction) => {
       req.body = JSON.parse(req.body.data);
       next();
     },
-    validateRequest(ProductValidation.ProductUpdateSchema),
-    ProductController.updateProduct
+    SalesBoardController.updateSalesBoard
   )
-  .delete(auth(UserRole.ADMIN), ProductController.deleteProduct);
+  .delete(auth(), SalesBoardController.deleteSalesBoard);
 
-export const ProductRoutes = router;
+export const SalesBoardRoutes = router;

@@ -9,6 +9,17 @@ import ApiError from "../../../errors/ApiErrors";
 import httpStatus from "http-status";
 
 const createProduct = async (payload: TProduct, imageFiles: any) => {
+  if (
+    !imageFiles?.images ||
+    !Array.isArray(imageFiles.images) ||
+    imageFiles.images.length === 0
+  ) {
+    throw new ApiError(
+      httpStatus.BAD_REQUEST,
+      "At least one image is required"
+    );
+  }
+
   const images = await Promise.all(
     imageFiles.images.map(async (item: any) => {
       const imageUrl = (await fileUploader.uploadToDigitalOcean(item)).Location;
@@ -102,6 +113,10 @@ const getSingleProduct = async (id: string) => {
     },
   });
 
+  if (!ProductProfile) {
+    throw new ApiError(httpStatus.NOT_FOUND, "Product not found");
+  }
+
   return ProductProfile;
 };
 
@@ -121,13 +136,17 @@ const updateProduct = async (
 
   const productImages = product?.images;
 
-  const newImages = await Promise.all(
-    imageFiles.images.map(async (item: any) => {
-      const imageUrl = (await fileUploader.uploadToDigitalOcean(item)).Location;
+  let newImages: string[] = [];
 
-      return imageUrl;
-    })
-  );
+  if (imageFiles?.images?.length > 0) {
+    newImages = await Promise.all(
+      imageFiles.images.map(async (item: any) => {
+        const imageUrl = (await fileUploader.uploadToDigitalOcean(item))
+          .Location;
+        return imageUrl;
+      })
+    );
+  }
 
   const images = [...productImages, ...newImages];
 
@@ -139,9 +158,43 @@ const updateProduct = async (
   return result;
 };
 
+const deleteProduct = async (
+  payload: { type: "update" | "delete"; images?: string[] },
+  id: string
+) => {
+  const product = await prisma.product.findFirst({
+    where: { id },
+    select: { id: true, images: true },
+  });
+
+  if (!product) {
+    throw new ApiError(httpStatus.NOT_FOUND, "Product not found");
+  }
+
+  if (payload.type === "delete") {
+    await prisma.product.delete({ where: { id: product.id } });
+
+    return { Message: "Product deleted successfully" };
+  }
+
+  const remainingImages = product.images?.filter(
+    (image) => !payload.images?.includes(image)
+  );
+
+  await prisma.product.update({
+    where: { id: product.id },
+    data: { images: remainingImages },
+  });
+
+  return { Message: "image Deleted successfully" };
+};
+
+
+
 export const ProductService = {
   createProduct,
   getProductsFromDb,
   getSingleProduct,
   updateProduct,
+  deleteProduct,
 };

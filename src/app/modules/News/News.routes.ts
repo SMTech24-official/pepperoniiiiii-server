@@ -1,40 +1,40 @@
 import express, { NextFunction, Request, Response } from "express";
 import validateRequest from "../../middlewares/validateRequest";
-import { ProductValidation } from "./Product.validation";
+import { NewsValidation } from "./News.validation";
 import auth from "../../middlewares/auth";
+import { NewsController } from "./News.controller";
 import { fileUploader } from "../../../helpars/fileUploader";
-import { ProductController } from "./Product.controller";
 import { UserRole } from "@prisma/client";
 
 const router = express.Router();
 
 router
   .route("/")
-  .get(ProductController.getProducts)
+  .get(auth(), NewsController.allNews)
   .post(
     auth(UserRole.ADMIN),
-    fileUploader.uploadMultipleImage,
+    fileUploader.uploadSingle,
     (req: Request, res: Response, next: NextFunction) => {
       req.body = JSON.parse(req.body.data);
       next();
     },
-    validateRequest(ProductValidation.CreateProductSchema),
-    ProductController.createProduct
+    validateRequest(NewsValidation.CreateNewsSchema),
+    NewsController.addNews
   );
 
 router
   .route("/:id")
-  .get(auth(), ProductController.getSingleProduct)
   .put(
+    auth(),
     auth(UserRole.ADMIN),
-    fileUploader.uploadMultipleImage,
+    fileUploader.uploadSingle,
     (req: Request, res: Response, next: NextFunction) => {
       req.body = JSON.parse(req.body.data);
       next();
     },
-    validateRequest(ProductValidation.ProductUpdateSchema),
-    ProductController.updateProduct
+    validateRequest(NewsValidation.UpdateNewsSchema),
+    NewsController.updateNews
   )
-  .delete(auth(UserRole.ADMIN), ProductController.deleteProduct);
+  .delete(auth(), NewsController.deleteNews);
 
-export const ProductRoutes = router;
+export const NewsRoutes = router;
