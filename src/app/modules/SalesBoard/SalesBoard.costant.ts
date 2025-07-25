@@ -1,8 +1,8 @@
 export const SalesBoardFilterableFields = [
-  "email",
+  "description",
   "searchTerm",
-  "role",
-  "fullName",
+  "price",
+  "quantity",
 ];
 
-export const SalesBoardSearchAbleFields = ["email", "fullName"];
+export const SalesBoardSearchAbleFields = ["quantity", "price", "description"];

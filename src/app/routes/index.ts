@@ -7,6 +7,8 @@ import { PurchaseProductRoutes } from "../modules/PurchaseProduct/PurchaseProduc
 import { NewsRoutes } from "../modules/News/News.routes";
 import { ForumRoutes } from "../modules/Forum/Forum.routes";
 import { SalesBoardRoutes } from "../modules/SalesBoard/SalesBoard.routes";
+import { AiDiagnosisRoutes } from "../modules/AiDiagnosis/AiDiagnosis.routes";
+import { DashboardRoutes } from "../modules/Dashboard/Dashboard.routes";
 
 const router = express.Router();
 
@@ -42,6 +44,14 @@ const moduleRoutes = [
   {
     path: "/sales-board",
     route: SalesBoardRoutes,
+  },
+  {
+    path: "/ai-diagnosis",
+    route: AiDiagnosisRoutes,
+  },
+  {
+    path: "/dashboard",
+    route: DashboardRoutes,
   },
 ];
 

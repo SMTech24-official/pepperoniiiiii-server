@@ -53,6 +53,7 @@ const allNews = async (
   const result = await prisma.news.findMany({
     where: whereConditions,
     skip,
+    take: limit,
     orderBy:
       options.sortBy && options.sortOrder
         ? {

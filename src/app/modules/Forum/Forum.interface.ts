@@ -11,8 +11,6 @@ export type TForum = {
 
 
 export type IForumFilterRequest = {
-  name?: string | undefined;
-  email?: string | undefined;
-  contactNumber?: string | undefined;
+  description?: string | undefined;
   searchTerm?: string | undefined;
 };

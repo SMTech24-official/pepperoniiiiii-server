@@ -9,11 +9,20 @@ const router = express.Router();
 
 router
   .route("/")
-  .get(auth(UserRole.ADMIN), PurchaseProductController.purchaseDetails)
+  .get(auth(UserRole.ADMIN), PurchaseProductController.allOrder)
   .post(
     auth(),
     validateRequest(PurchaseProductValidation.CreatePurchaseProductSchema),
     PurchaseProductController.purchaseProduct
+  );
+
+router
+  .route("/:id")
+  .get(auth(UserRole.ADMIN), PurchaseProductController.userOrders)
+  .patch(
+    auth(UserRole.ADMIN),
+    validateRequest(PurchaseProductValidation.UpdateOrderStatusSchema),
+    PurchaseProductController.updateOrderStatus
   );
 
 export const PurchaseProductRoutes = router;

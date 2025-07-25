@@ -1,8 +1,3 @@
-export const forumFilterableFields = [
-  "email",
-  "searchTerm",
-  "role",
-  "fullName",
-];
+export const forumFilterableFields = ["description", "searchTerm"];
 
-export const forumSearchAbleFields = ["email", "fullName"];
+export const forumSearchAbleFields = ["description"];

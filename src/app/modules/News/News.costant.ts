@@ -1,8 +1,3 @@
-export const newsFilterableFields = [
-  "email",
-  "searchTerm",
-  "role",
-  "fullName",
-];
+export const newsFilterableFields = ["title", "searchTerm"];
 
-export const newsSearchAbleFields = ["email", "fullName"];
+export const newsSearchAbleFields = ["title"];

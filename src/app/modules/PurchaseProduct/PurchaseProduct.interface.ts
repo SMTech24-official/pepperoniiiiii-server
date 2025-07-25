@@ -1,3 +1,4 @@
+import { OrderStatus } from "@prisma/client";
 
 export type TPurchaseProduct = {
   id: string;
@@ -5,6 +6,8 @@ export type TPurchaseProduct = {
   name: string;
   phoneNumber: string;
   deliveryAddress: string;
+  orderStatus: OrderStatus;
+  totalPrice: number;
   paymentId: string;
   createdAt: Date;
   productId: string;
@@ -12,3 +15,9 @@ export type TPurchaseProduct = {
 };
 
 
+export type IPurchaseFilterRequest = {
+  name?: string | undefined;
+  email?: string | undefined;
+  contactNumber?: string | undefined;
+  searchTerm?: string | undefined;
+};

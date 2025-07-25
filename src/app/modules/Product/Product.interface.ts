@@ -17,7 +17,7 @@ export type TProduct = {
 
 export type IProductFilterRequest = {
   name?: string | undefined;
-  email?: string | undefined;
-  contactNumber?: string | undefined;
+  category?: string | undefined;
+  status?: string | undefined;
   searchTerm?: string | undefined;
 };

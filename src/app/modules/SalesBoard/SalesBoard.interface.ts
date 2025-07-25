@@ -1,4 +1,3 @@
-
 export type TSalesBoard = {
   id: string;
   description: string;
@@ -10,11 +9,9 @@ export type TSalesBoard = {
   userId: string;
 };
 
-
-
 export type ISalesBoardFilterRequest = {
-  name?: string | undefined;
-  email?: string | undefined;
-  contactNumber?: string | undefined;
+  quantity?: string | undefined;
+  price?: string | undefined;
+  description?: string | undefined;
   searchTerm?: string | undefined;
 };
