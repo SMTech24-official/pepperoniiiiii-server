@@ -12,6 +12,8 @@ const PurchaseProduct_routes_1 = require("../modules/PurchaseProduct/PurchasePro
 const News_routes_1 = require("../modules/News/News.routes");
 const Forum_routes_1 = require("../modules/Forum/Forum.routes");
 const SalesBoard_routes_1 = require("../modules/SalesBoard/SalesBoard.routes");
+const AiDiagnosis_routes_1 = require("../modules/AiDiagnosis/AiDiagnosis.routes");
+const Dashboard_routes_1 = require("../modules/Dashboard/Dashboard.routes");
 const router = express_1.default.Router();
 const moduleRoutes = [
     {
@@ -45,6 +47,14 @@ const moduleRoutes = [
     {
         path: "/sales-board",
         route: SalesBoard_routes_1.SalesBoardRoutes,
+    },
+    {
+        path: "/ai-diagnosis",
+        route: AiDiagnosis_routes_1.AiDiagnosisRoutes,
+    },
+    {
+        path: "/dashboard",
+        route: Dashboard_routes_1.DashboardRoutes,
     },
 ];
 moduleRoutes.forEach((route) => router.use(route.path, route.route));

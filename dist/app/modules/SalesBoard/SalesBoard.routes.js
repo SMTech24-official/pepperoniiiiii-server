@@ -15,14 +15,14 @@ const router = express_1.default.Router();
 router
     .route("/")
     .get((0, auth_1.default)(), SalesBoard_controller_1.SalesBoardController.allSalesBoard)
-    .post((0, auth_1.default)(client_1.UserRole.ADMIN), fileUploader_1.fileUploader.uploadSingle, (req, res, next) => {
+    .post((0, auth_1.default)(client_1.UserRole.ADMIN, client_1.UserRole.USER), fileUploader_1.fileUploader.uploadSingle, (req, res, next) => {
     req.body = JSON.parse(req.body.data);
     next();
 }, (0, validateRequest_1.default)(SalesBoard_validation_1.SalesBoardValidation.CreateSalesBoardSchema), SalesBoard_controller_1.SalesBoardController.addSalesBoard);
 router.get("/my", (0, auth_1.default)(), SalesBoard_controller_1.SalesBoardController.mySalesBoard);
 router
     .route("/:id")
-    .put((0, auth_1.default)(), (0, auth_1.default)(client_1.UserRole.ADMIN), fileUploader_1.fileUploader.uploadSingle, (req, res, next) => {
+    .put((0, auth_1.default)(), (0, auth_1.default)(client_1.UserRole.ADMIN, client_1.UserRole.USER), fileUploader_1.fileUploader.uploadSingle, (req, res, next) => {
     req.body = JSON.parse(req.body.data);
     next();
 }, SalesBoard_controller_1.SalesBoardController.updateSalesBoard)

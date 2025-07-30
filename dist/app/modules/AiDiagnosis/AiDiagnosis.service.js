@@ -23,25 +23,30 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.PurchaseProductService = void 0;
+exports.AiDiagnosisService = void 0;
 const prisma_1 = __importDefault(require("../../../shared/prisma"));
-const paginationHelper_1 = require("../../../helpars/paginationHelper");
-const Purchase_costant_1 = require("./Purchase.costant");
 const ApiErrors_1 = __importDefault(require("../../../errors/ApiErrors"));
 const http_status_1 = __importDefault(require("http-status"));
-const purchaseProduct = (payload, userId) => __awaiter(void 0, void 0, void 0, function* () {
-    const res = yield prisma_1.default.purchaseProduct.create({
-        data: Object.assign(Object.assign({}, payload), { userId }),
+const paginationHelper_1 = require("../../../helpars/paginationHelper");
+const AiDiagnosis_costant_1 = require("./AiDiagnosis.costant");
+const fileUploader_1 = require("../../../helpars/fileUploader");
+const addAiDiagnosis = (payload, imageFile, userId) => __awaiter(void 0, void 0, void 0, function* () {
+    if (!imageFile) {
+        throw new ApiErrors_1.default(http_status_1.default.NOT_FOUND, "Image not found");
+    }
+    const image = (yield fileUploader_1.fileUploader.uploadToDigitalOcean(imageFile)).Location;
+    const res = yield prisma_1.default.aiDiagnosis.create({
+        data: Object.assign(Object.assign({}, payload), { image, userId }),
     });
     return res;
 });
-const allOrder = (params, options) => __awaiter(void 0, void 0, void 0, function* () {
+const allAiDiagnosis = (params, options) => __awaiter(void 0, void 0, void 0, function* () {
     const { page, limit, skip } = paginationHelper_1.paginationHelper.calculatePagination(options);
     const { searchTerm } = params, filterData = __rest(params, ["searchTerm"]);
     const andConditions = [];
     if (params.searchTerm) {
         andConditions.push({
-            OR: Purchase_costant_1.purchaseSearchAbleFields.map((field) => ({
+            OR: AiDiagnosis_costant_1.AiDiagnosisSearchAbleFields.map((field) => ({
                 [field]: {
                     contains: params.searchTerm,
                     mode: "insensitive",
@@ -58,10 +63,8 @@ const allOrder = (params, options) => __awaiter(void 0, void 0, void 0, function
             })),
         });
     }
-    const whereConditions = {
-        AND: andConditions,
-    };
-    const result = yield prisma_1.default.purchaseProduct.findMany({
+    const whereConditions = { AND: andConditions };
+    const result = yield prisma_1.default.aiDiagnosis.findMany({
         where: whereConditions,
         skip,
         take: limit,
@@ -72,9 +75,8 @@ const allOrder = (params, options) => __awaiter(void 0, void 0, void 0, function
             : {
                 createdAt: "desc",
             },
-        include: { product: { select: { name: true, price: true } } },
     });
-    const total = yield prisma_1.default.purchaseProduct.count({
+    const total = yield prisma_1.default.aiDiagnosis.count({
         where: whereConditions,
     });
     return {
@@ -86,13 +88,14 @@ const allOrder = (params, options) => __awaiter(void 0, void 0, void 0, function
         data: result,
     };
 });
-const userOrders = (params, options, userId) => __awaiter(void 0, void 0, void 0, function* () {
+const userAiDiagnosis = (params, options, userId) => __awaiter(void 0, void 0, void 0, function* () {
+    console.log(userId);
     const { page, limit, skip } = paginationHelper_1.paginationHelper.calculatePagination(options);
     const { searchTerm } = params, filterData = __rest(params, ["searchTerm"]);
     const andConditions = [];
     if (params.searchTerm) {
         andConditions.push({
-            OR: Purchase_costant_1.purchaseSearchAbleFields.map((field) => ({
+            OR: AiDiagnosis_costant_1.AiDiagnosisSearchAbleFields.map((field) => ({
                 [field]: {
                     contains: params.searchTerm,
                     mode: "insensitive",
@@ -109,10 +112,8 @@ const userOrders = (params, options, userId) => __awaiter(void 0, void 0, void 0
             })),
         });
     }
-    const whereConditions = {
-        AND: andConditions,
-    };
-    const result = yield prisma_1.default.purchaseProduct.findMany({
+    const whereConditions = { AND: andConditions };
+    const result = yield prisma_1.default.aiDiagnosis.findMany({
         where: Object.assign(Object.assign({}, whereConditions), { userId }),
         skip,
         take: limit,
@@ -123,9 +124,8 @@ const userOrders = (params, options, userId) => __awaiter(void 0, void 0, void 0
             : {
                 createdAt: "desc",
             },
-        include: { product: { select: { name: true, price: true } } },
     });
-    const total = yield prisma_1.default.purchaseProduct.count({
+    const total = yield prisma_1.default.aiDiagnosis.count({
         where: Object.assign(Object.assign({}, whereConditions), { userId }),
     });
     return {
@@ -137,24 +137,15 @@ const userOrders = (params, options, userId) => __awaiter(void 0, void 0, void 0
         data: result,
     };
 });
-const updateOrderStatus = (payload, orderId) => __awaiter(void 0, void 0, void 0, function* () {
-    const order = yield prisma_1.default.purchaseProduct.findUnique({
-        where: { id: orderId },
-        select: { id: true },
+const deleteAiDiagnosis = (id) => __awaiter(void 0, void 0, void 0, function* () {
+    yield prisma_1.default.aiDiagnosis.delete({
+        where: { id },
     });
-    if (!order) {
-        throw new ApiErrors_1.default(http_status_1.default.NOT_FOUND, "Order not found");
-    }
-    const result = yield prisma_1.default.purchaseProduct.update({
-        where: { id: orderId },
-        data: { orderStatus: payload.status },
-        select: { orderStatus: true },
-    });
-    return result;
+    return { message: "Deleted successfully!" };
 });
-exports.PurchaseProductService = {
-    purchaseProduct,
-    allOrder,
-    userOrders,
-    updateOrderStatus,
+exports.AiDiagnosisService = {
+    addAiDiagnosis,
+    allAiDiagnosis,
+    userAiDiagnosis,
+    deleteAiDiagnosis,
 };

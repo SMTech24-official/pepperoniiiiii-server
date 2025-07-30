@@ -65,6 +65,7 @@ const allNews = (params, options) => __awaiter(void 0, void 0, void 0, function*
     const result = yield prisma_1.default.news.findMany({
         where: whereConditions,
         skip,
+        take: limit,
         orderBy: options.sortBy && options.sortOrder
             ? {
                 [options.sortBy]: options.sortOrder,

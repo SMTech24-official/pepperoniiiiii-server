@@ -23,6 +23,17 @@ const addToCart = (payload, userId) => __awaiter(void 0, void 0, void 0, functio
     if (!product) {
         throw new ApiErrors_1.default(http_status_1.default.NOT_FOUND, "Product not found");
     }
+    const myCarts = yield prisma_1.default.cart.findFirst({
+        where: { userId, productId: payload.productId },
+        select: { id: true },
+    });
+    if (myCarts) {
+        const res = yield prisma_1.default.cart.update({
+            where: { id: myCarts.id },
+            data: { quantity: { increment: 1 } },
+        });
+        return res;
+    }
     const res = yield prisma_1.default.cart.create({ data: Object.assign(Object.assign({}, payload), { userId }) });
     return res;
 });
@@ -32,7 +43,15 @@ const myCarts = (userId) => __awaiter(void 0, void 0, void 0, function* () {
         select: {
             id: true,
             quantity: true,
-            product: { select: { id: true, name: true, price: true, weight: true } },
+            product: {
+                select: {
+                    id: true,
+                    name: true,
+                    price: true,
+                    weight: true,
+                    images: true,
+                },
+            },
         },
     });
     return res;

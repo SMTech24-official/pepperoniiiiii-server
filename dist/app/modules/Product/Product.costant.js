@@ -2,9 +2,17 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.ProductSearchAbleFields = exports.ProductFilterableFields = void 0;
 exports.ProductFilterableFields = [
-    "email",
+    "name",
     "searchTerm",
-    "role",
-    "fullName",
+    "price",
+    "category",
+    "stock",
+    "status",
 ];
-exports.ProductSearchAbleFields = ["email", "fullName"];
+exports.ProductSearchAbleFields = [
+    "name",
+    "price",
+    "category",
+    "stock",
+    "status",
+];

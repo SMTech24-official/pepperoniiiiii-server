@@ -12,7 +12,7 @@ router
   .route("/")
   .get(auth(), SalesBoardController.allSalesBoard)
   .post(
-    auth(UserRole.ADMIN),
+    auth(UserRole.ADMIN, UserRole.USER),
     fileUploader.uploadSingle,
     (req: Request, res: Response, next: NextFunction) => {
       req.body = JSON.parse(req.body.data);
@@ -28,7 +28,7 @@ router
   .route("/:id")
   .put(
     auth(),
-    auth(UserRole.ADMIN),
+    auth(UserRole.ADMIN, UserRole.USER),
     fileUploader.uploadSingle,
     (req: Request, res: Response, next: NextFunction) => {
       req.body = JSON.parse(req.body.data);

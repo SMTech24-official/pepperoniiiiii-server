@@ -12,47 +12,47 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.PurchaseProductController = void 0;
+exports.AiDiagnosisController = void 0;
 const catchAsync_1 = __importDefault(require("../../../shared/catchAsync"));
 const pick_1 = __importDefault(require("../../../shared/pick"));
 const sendResponse_1 = __importDefault(require("../../../shared/sendResponse"));
-const News_costant_1 = require("../News/News.costant");
-const PurchaseProduct_service_1 = require("./PurchaseProduct.service");
-const purchaseProduct = (0, catchAsync_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const result = yield PurchaseProduct_service_1.PurchaseProductService.purchaseProduct(req.body, req.user.id);
+const AiDiagnosis_costant_1 = require("./AiDiagnosis.costant");
+const AiDiagnosis_service_1 = require("./AiDiagnosis.service");
+const addAiDiagnosis = (0, catchAsync_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const result = yield AiDiagnosis_service_1.AiDiagnosisService.addAiDiagnosis(req.body, req.file, req.user.id);
     (0, sendResponse_1.default)(res, {
-        message: "Add To PurchaseProduct successfully!",
+        message: "AiDiagnosis created successfully!",
         data: result,
     });
 }));
-const allOrder = (0, catchAsync_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const filters = (0, pick_1.default)(req.query, News_costant_1.newsFilterableFields);
+const allAiDiagnosis = (0, catchAsync_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const filters = (0, pick_1.default)(req.query, AiDiagnosis_costant_1.AiDiagnosisFilterableFields);
     const options = (0, pick_1.default)(req.query, ["limit", "page", "sortBy", "sortOrder"]);
-    const result = yield PurchaseProduct_service_1.PurchaseProductService.allOrder(filters, options);
+    const result = yield AiDiagnosis_service_1.AiDiagnosisService.allAiDiagnosis(filters, options);
     (0, sendResponse_1.default)(res, {
-        message: "All Order retrieve successfully!",
+        message: "AiDiagnosis retrieve successfully!",
         data: result,
     });
 }));
-const userOrders = (0, catchAsync_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const filters = (0, pick_1.default)(req.query, News_costant_1.newsFilterableFields);
+const userAiDiagnosis = (0, catchAsync_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const filters = (0, pick_1.default)(req.query, AiDiagnosis_costant_1.AiDiagnosisFilterableFields);
     const options = (0, pick_1.default)(req.query, ["limit", "page", "sortBy", "sortOrder"]);
-    const result = yield PurchaseProduct_service_1.PurchaseProductService.userOrders(filters, options, req.params.id);
+    const result = yield AiDiagnosis_service_1.AiDiagnosisService.userAiDiagnosis(filters, options, req.params.id);
     (0, sendResponse_1.default)(res, {
-        message: "User Orders retrieve successfully!",
+        message: "AiDiagnosis retrieve successfully!",
         data: result,
     });
 }));
-const updateOrderStatus = (0, catchAsync_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const result = yield PurchaseProduct_service_1.PurchaseProductService.updateOrderStatus(req.body, req.params.id);
+const deleteAiDiagnosis = (0, catchAsync_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const result = yield AiDiagnosis_service_1.AiDiagnosisService.deleteAiDiagnosis(req.params.id);
     (0, sendResponse_1.default)(res, {
-        message: "Order status updated successfully!",
+        message: "Deleted successfully!",
         data: result,
     });
 }));
-exports.PurchaseProductController = {
-    purchaseProduct,
-    allOrder,
-    userOrders,
-    updateOrderStatus
+exports.AiDiagnosisController = {
+    addAiDiagnosis,
+    allAiDiagnosis,
+    userAiDiagnosis,
+    deleteAiDiagnosis,
 };

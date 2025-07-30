@@ -13,6 +13,10 @@ const client_1 = require("@prisma/client");
 const router = express_1.default.Router();
 router
     .route("/")
-    .get((0, auth_1.default)(client_1.UserRole.ADMIN), PurchaseProduct_controller_1.PurchaseProductController.purchaseDetails)
+    .get((0, auth_1.default)(client_1.UserRole.ADMIN), PurchaseProduct_controller_1.PurchaseProductController.allOrder)
     .post((0, auth_1.default)(), (0, validateRequest_1.default)(PurchaseProduct_validation_1.PurchaseProductValidation.CreatePurchaseProductSchema), PurchaseProduct_controller_1.PurchaseProductController.purchaseProduct);
+router
+    .route("/:id")
+    .get((0, auth_1.default)(client_1.UserRole.ADMIN), PurchaseProduct_controller_1.PurchaseProductController.userOrders)
+    .patch((0, auth_1.default)(client_1.UserRole.ADMIN), (0, validateRequest_1.default)(PurchaseProduct_validation_1.PurchaseProductValidation.UpdateOrderStatusSchema), PurchaseProduct_controller_1.PurchaseProductController.updateOrderStatus);
 exports.PurchaseProductRoutes = router;

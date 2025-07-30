@@ -12,6 +12,20 @@ const addToCart = async (payload: TCart, userId: string) => {
     throw new ApiError(httpStatus.NOT_FOUND, "Product not found");
   }
 
+  const myCarts = await prisma.cart.findFirst({
+    where: { userId, productId: payload.productId },
+    select: { id: true },
+  });
+
+  if (myCarts) {
+    const res = await prisma.cart.update({
+      where: { id: myCarts.id },
+      data: { quantity: { increment: 1 } },
+    });
+
+    return res;
+  }
+
   const res = await prisma.cart.create({ data: { ...payload, userId } });
 
   return res;
@@ -23,7 +37,15 @@ const myCarts = async (userId: string) => {
     select: {
       id: true,
       quantity: true,
-      product: { select: { id: true, name: true, price: true, weight: true } },
+      product: {
+        select: {
+          id: true,
+          name: true,
+          price: true,
+          weight: true,
+          images: true,
+        },
+      },
     },
   });
 
