@@ -77,13 +77,6 @@ const getProductsFromDb = async (
             createdAt: "desc",
           },
 
-    select: {
-      id: true,
-      images: true,
-      price: true,
-      name: true,
-      avgRating: true,
-    },
   });
   const total = await prisma.product.count({
     where: whereConditions,

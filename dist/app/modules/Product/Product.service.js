@@ -78,13 +78,6 @@ const getProductsFromDb = (params, options) => __awaiter(void 0, void 0, void 0,
             : {
                 createdAt: "desc",
             },
-        select: {
-            id: true,
-            images: true,
-            price: true,
-            name: true,
-            avgRating: true,
-        },
     });
     const total = yield prisma_1.default.product.count({
         where: whereConditions,

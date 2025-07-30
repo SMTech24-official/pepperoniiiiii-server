@@ -8,6 +8,7 @@ import { userSearchAbleFields } from "./user.costant";
 import config from "../../../config";
 import { fileUploader } from "../../../helpars/fileUploader";
 import { IUserFilterRequest, TUser } from "./user.interface";
+import httpStatus from "http-status";
 
 const createUserIntoDb = async (payload: TUser) => {
   const existingUser = await prisma.user.findFirst({
@@ -75,7 +76,7 @@ const getUsersFromDb = async (
   const whereConditions: Prisma.UserWhereInput = { AND: andConditions };
 
   const result = await prisma.user.findMany({
-    where: whereConditions,
+    where: { ...whereConditions, role: { not: "ADMIN" } },
     skip,
     orderBy:
       options.sortBy && options.sortOrder
@@ -89,7 +90,11 @@ const getUsersFromDb = async (
       id: true,
       fullName: true,
       email: true,
+      image: true,
       role: true,
+      phoneNumber: true,
+      location: true,
+      isDeleted: true,
       createdAt: true,
       updatedAt: true,
     },
@@ -157,9 +162,29 @@ const updateProfile = async (payload: User, imageFile: any, userId: string) => {
   return result;
 };
 
+const blockUser = async (userId: string) => {
+  const user = await prisma.user.findFirst({
+    where: { id: userId },
+    select: { id: true, isDeleted: true },
+  });
+
+  if (!user) {
+    throw new ApiError(httpStatus.NOT_FOUND, "User not found");
+  }
+
+  await prisma.user.update({
+    where: { id: user.id },
+    data: { isDeleted: !user.isDeleted },
+  });
+
+  return { message: "User is blocked successfully" };
+};
+
+
 export const userService = {
   createUserIntoDb,
   getUsersFromDb,
   getMyProfile,
   updateProfile,
+  blockUser
 };

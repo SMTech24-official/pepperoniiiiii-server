@@ -54,6 +54,7 @@ const paginationHelper_1 = require("../../../helpars/paginationHelper");
 const user_costant_1 = require("./user.costant");
 const config_1 = __importDefault(require("../../../config"));
 const fileUploader_1 = require("../../../helpars/fileUploader");
+const http_status_1 = __importDefault(require("http-status"));
 const createUserIntoDb = (payload) => __awaiter(void 0, void 0, void 0, function* () {
     const existingUser = yield prisma_1.default.user.findFirst({
         where: {
@@ -103,7 +104,7 @@ const getUsersFromDb = (params, options) => __awaiter(void 0, void 0, void 0, fu
     }
     const whereConditions = { AND: andConditions };
     const result = yield prisma_1.default.user.findMany({
-        where: whereConditions,
+        where: Object.assign(Object.assign({}, whereConditions), { role: { not: "ADMIN" } }),
         skip,
         orderBy: options.sortBy && options.sortOrder
             ? {
@@ -116,7 +117,11 @@ const getUsersFromDb = (params, options) => __awaiter(void 0, void 0, void 0, fu
             id: true,
             fullName: true,
             email: true,
+            image: true,
             role: true,
+            phoneNumber: true,
+            location: true,
+            isDeleted: true,
             createdAt: true,
             updatedAt: true,
         },
@@ -175,9 +180,24 @@ const updateProfile = (payload, imageFile, userId) => __awaiter(void 0, void 0, 
     });
     return result;
 });
+const blockUser = (userId) => __awaiter(void 0, void 0, void 0, function* () {
+    const user = yield prisma_1.default.user.findFirst({
+        where: { id: userId },
+        select: { id: true, isDeleted: true },
+    });
+    if (!user) {
+        throw new ApiErrors_1.default(http_status_1.default.NOT_FOUND, "User not found");
+    }
+    yield prisma_1.default.user.update({
+        where: { id: user.id },
+        data: { isDeleted: !user.isDeleted },
+    });
+    return { message: "User is blocked successfully" };
+});
 exports.userService = {
     createUserIntoDb,
     getUsersFromDb,
     getMyProfile,
     updateProfile,
+    blockUser
 };
